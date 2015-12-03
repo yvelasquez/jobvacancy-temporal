@@ -97,10 +97,9 @@ public class UserService {
         newUser.setLastName(lastName);
         newUser.setEmail(email);
         newUser.setLangKey(langKey);
-        // new user is not active
-        newUser.setActivated(false);
-        // new user gets registration key
-        newUser.setActivationKey(RandomUtil.generateActivationKey());
+        // TODO: review how to force activation only for prod env in an elegant way
+        // newUser.setActivationKey(RandomUtil.generateActivationKey());
+        newUser.setActivated(true);
         authorities.add(authority);
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
