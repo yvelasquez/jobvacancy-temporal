@@ -2,12 +2,17 @@ package com.jobvacancy.web.rest;
 
 import com.jobvacancy.Application;
 import com.jobvacancy.domain.Offer;
+import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.OfferRepository;
 
+import com.jobvacancy.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
+
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -24,8 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -52,6 +59,12 @@ public class OfferResourceTest {
     private OfferRepository offerRepository;
 
     @Inject
+    private UserRepository userRepository;
+
+    @Mock
+    private UserRepository mockUserRepository;
+
+    @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Inject
@@ -66,6 +79,12 @@ public class OfferResourceTest {
         MockitoAnnotations.initMocks(this);
         OfferResource offerResource = new OfferResource();
         ReflectionTestUtils.setField(offerResource, "offerRepository", offerRepository);
+
+        // TODO: this should be refactored in a based class because is a common concern
+        Optional<User> user =  userRepository.findOneByLogin("user");
+        when(mockUserRepository.findOneByLogin(Mockito.any())).thenReturn(user);
+        ReflectionTestUtils.setField(offerResource, "userRepository", mockUserRepository);
+
         this.restOfferMockMvc = MockMvcBuilders.standaloneSetup(offerResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();

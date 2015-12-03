@@ -2,7 +2,11 @@ package com.jobvacancy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.jobvacancy.domain.Offer;
+import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.OfferRepository;
+import com.jobvacancy.repository.UserRepository;
+import com.jobvacancy.security.CustomUserDetails;
+import com.jobvacancy.security.SecurityUtils;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +35,9 @@ public class OfferResource {
     @Inject
     private OfferRepository offerRepository;
 
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * POST  /offers -> Create a new offer.
      */
@@ -43,6 +50,9 @@ public class OfferResource {
         if (offer.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new offer cannot already have an ID").body(null);
         }
+        String currentLogin = SecurityUtils.getCurrentUserLogin();
+        Optional<User> currentUser =  userRepository.findOneByLogin(currentLogin);
+        offer.setUser(currentUser.get());
         Offer result = offerRepository.save(offer);
         return ResponseEntity.created(new URI("/api/offers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("offer", result.getId().toString()))
