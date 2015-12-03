@@ -1,0 +1,11 @@
+jhipster-prod-postgresql:
+  container_name: jobvacancy-prod-postgresql
+  image: postgres
+  # volumes:
+  # - ~/volumes/jhipster/jobvacancy/prod-postgresql/:/var/lib/postgresql/
+  environment:
+  - POSTGRES_USER=jobvacancy
+  - POSTGRES_PASSWORD=
+  ports:
+  - "5432:5432"
+
