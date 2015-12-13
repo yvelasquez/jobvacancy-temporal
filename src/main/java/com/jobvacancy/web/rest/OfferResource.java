@@ -86,7 +86,7 @@ public class OfferResource {
     @Timed
     public List<Offer> getAllOffers() {
         log.debug("REST request to get all Offers");
-        return offerRepository.findAll();
+        return offerRepository.findByUserIsCurrentUser();
     }
 
     /**

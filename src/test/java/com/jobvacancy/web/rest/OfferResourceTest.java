@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -19,12 +21,15 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -33,6 +38,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -81,7 +87,7 @@ public class OfferResourceTest {
         ReflectionTestUtils.setField(offerResource, "offerRepository", offerRepository);
 
         // TODO: this should be refactored in a based class because is a common concern
-        Optional<User> user =  userRepository.findOneByLogin("user");
+        user =  userRepository.findOneByLogin("user");
         when(mockUserRepository.findOneByLogin(Mockito.any())).thenReturn(user);
         ReflectionTestUtils.setField(offerResource, "userRepository", mockUserRepository);
 
@@ -90,12 +96,15 @@ public class OfferResourceTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
+    private Optional<User> user;
+
     @Before
     public void initTest() {
         offer = new Offer();
         offer.setTitle(DEFAULT_TITLE);
         offer.setLocation(DEFAULT_LOCATION);
         offer.setDescription(DEFAULT_DESCRIPTION);
+        offer.setUser(user.get());
     }
 
     @Test
@@ -155,20 +164,29 @@ public class OfferResourceTest {
         assertThat(offers).hasSize(databaseSizeBeforeTest);
     }
 
+    @Inject
+    private WebApplicationContext webApplicationContext;
+    @Inject
+    private FilterChainProxy springSecurityFilterChain;
+
     @Test
     @Transactional
+    @WithMockUser()
     public void getAllOffers() throws Exception {
         // Initialize the database
         offerRepository.saveAndFlush(offer);
 
+        // Given the way this request is resolved we need to setup a security context
+        restOfferMockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+
         // Get all the offers
-        restOfferMockMvc.perform(get("/api/offers"))
+        restOfferMockMvc.perform(get("/api/offers").with(user("user")))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(offer.getId().intValue())))
                 .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
-                .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
-                .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+            .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
     }
 
     @Test
