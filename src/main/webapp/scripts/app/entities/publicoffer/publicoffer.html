@@ -1,0 +1,29 @@
+<div>
+    <h2>Current Job Offers</h2>
+    <jh-alert></jh-alert>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Location</th>
+                <th>Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="jobOffer in jobOffers">
+                <td>{{jobOffer.title}}</td>
+                <td>{{jobOffer.location}}</td>
+                <td>{{jobOffer.description}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
