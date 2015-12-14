@@ -9,8 +9,11 @@ import com.jobvacancy.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 
+import static org.hamcrest.Matchers.isEmptyString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 import org.mockito.Mock;
@@ -171,8 +174,7 @@ public class OfferResourceTest {
 
     @Test
     @Transactional
-    @WithMockUser()
-    public void getAllOffers() throws Exception {
+    public void getAllOffersReturnsCurrentUserOffers() throws Exception {
         // Initialize the database
         offerRepository.saveAndFlush(offer);
 
@@ -187,6 +189,22 @@ public class OfferResourceTest {
                 .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
             .andExpect(jsonPath("$.[*].location").value(hasItem(DEFAULT_LOCATION.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+    }
+
+    @Test
+    @Transactional
+    public void getAllOffersDoesNotReturnOtherUsersOffers() throws Exception {
+        // Initialize the database with just an offer that belogs to "user"
+        offerRepository.saveAndFlush(offer);
+
+        // Given the way this request is resolved we need to setup a security context
+        restOfferMockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+
+        // Get all the offers should not return offers for user2
+        restOfferMockMvc.perform(get("/api/offers").with(user("user2")))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].id").value(empty()));
     }
 
     @Test
