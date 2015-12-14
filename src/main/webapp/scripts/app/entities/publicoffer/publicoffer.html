@@ -15,6 +15,7 @@
                 <th>Title</th>
                 <th>Location</th>
                 <th>Description</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -22,6 +23,12 @@
                 <td>{{jobOffer.title}}</td>
                 <td>{{jobOffer.location}}</td>
                 <td>{{jobOffer.description}}</td>
+                <td>
+                    <button type="submit"
+                        ui-sref="application({id:publicOffer.id})"
+                        class="btn btn-primary btn-sm">
+                        <span class="glyphicon glyphicon-pencil"></span>&nbsp;<span> Apply</span>
+                </td>
             </tr>
             </tbody>
         </table>
