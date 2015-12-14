@@ -1,6 +1,7 @@
 package com.jobvacancy.service;
 
 import com.jobvacancy.config.JHipsterProperties;
+import com.jobvacancy.domain.Offer;
 import com.jobvacancy.domain.User;
 
 import org.apache.commons.lang.CharEncoding;
@@ -92,5 +93,12 @@ public class MailService {
         String subject = messageSource.getMessage("email.reset.title", null, locale);
         sendEmail(user.getEmail(), subject, content, false, true);
     }
-    
+
+    public void sendApplication(String applicantEmail, Offer offer) {
+        this.sendEmail(offer.getUser().getEmail(),
+            "[JobVacancy] New candidate",
+            "Hi," + applicantEmail + "applied for your offer:" + offer.getTitle(),
+            false,
+            false);
+    }
 }

@@ -4,7 +4,7 @@ angular.module('jobvacancyApp').controller('ApplicationDialogController',
     ['$scope', '$stateParams', '$modalInstance', 'entity', 'PublicOffer','Application', 'User',
         function($scope, $stateParams, $modalInstance, entity, JobOffer,Application, User) {
 
-        $scope.jobApplication = entity;
+        $scope.application = entity;
 
 
         var onSaveFinished = function (result) {
