@@ -77,7 +77,12 @@ public class OfferResourceTest {
     @Inject
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
 
+    @Inject
+    private WebApplicationContext webApplicationContext;
+
     private MockMvc restOfferMockMvc;
+
+    private Optional<User> user;
 
     private Offer offer;
 
@@ -97,8 +102,6 @@ public class OfferResourceTest {
             .setMessageConverters(jacksonMessageConverter).build();
     }
 
-    private Optional<User> user;
-
     @Before
     public void initTest() {
         offer = new Offer();
@@ -114,7 +117,6 @@ public class OfferResourceTest {
         int databaseSizeBeforeCreate = offerRepository.findAll().size();
 
         // Create the Offer
-
         restOfferMockMvc.perform(post("/api/offers")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(offer)))
@@ -164,11 +166,6 @@ public class OfferResourceTest {
         List<Offer> offers = offerRepository.findAll();
         assertThat(offers).hasSize(databaseSizeBeforeTest);
     }
-
-    @Inject
-    private WebApplicationContext webApplicationContext;
-    @Inject
-    private FilterChainProxy springSecurityFilterChain;
 
     @Test
     @Transactional
