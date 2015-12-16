@@ -1,7 +1,9 @@
 package com.jobvacancy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.jobvacancy.domain.JobApplication;
 import com.jobvacancy.domain.Offer;
+import com.jobvacancy.repository.JobApplicationRepository;
 import com.jobvacancy.repository.OfferRepository;
 import com.jobvacancy.service.MailService;
 import com.jobvacancy.web.rest.dto.JobApplicationDTO;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import java.net.URI;
 import java.net.URISyntaxException;
 
 @RestController
@@ -29,18 +32,29 @@ public class JobApplicationResource {
     private OfferRepository offerRepository;
 
     @Inject
+    private JobApplicationRepository jobApplicationRepository;
+
+    @Inject
     private MailService mailService;
 
     @RequestMapping(value = "/applications",
         method = RequestMethod.POST,
         produces = MediaType.APPLICATION_JSON_VALUE)
     @Timed
-    public ResponseEntity<Offer> createJobApplication(@Valid @RequestBody JobApplicationDTO jobApplication) throws URISyntaxException {
+    public ResponseEntity<JobApplication> createJobApplication(@Valid @RequestBody JobApplicationDTO jobApplication) throws URISyntaxException {
         log.debug("REST request to save JobApplication : {}", jobApplication);
         Offer offer = offerRepository.findOne(jobApplication.getOfferId());
+        JobApplication application = new JobApplication();
+        application.setOffer(offer);
+        application.setApplicantEmail(jobApplication.getEmail());
+        application.setApplicatName(jobApplication.getFullname());
+        JobApplication result = jobApplicationRepository.save(application);
+
         this.mailService.sendApplication(jobApplication.getEmail(), offer);
 
-        return ResponseEntity.accepted()
-            .headers(HeaderUtil.createAlert("Application created and sent to offer's owner", "")).body(null);
+        return ResponseEntity.created(new URI("/api/offers/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert("Job Application", result.getId().toString()))
+            .body(result);
+
     }
 }

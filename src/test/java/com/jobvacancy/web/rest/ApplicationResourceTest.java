@@ -1,8 +1,10 @@
 package com.jobvacancy.web.rest;
 
 import com.jobvacancy.Application;
+import com.jobvacancy.domain.JobApplication;
 import com.jobvacancy.domain.Offer;
 import com.jobvacancy.domain.User;
+import com.jobvacancy.repository.JobApplicationRepository;
 import com.jobvacancy.repository.OfferRepository;
 import com.jobvacancy.repository.UserRepository;
 import com.jobvacancy.service.MailService;
@@ -51,6 +53,9 @@ public class ApplicationResourceTest {
     private OfferRepository offerRepository;
 
     @Inject
+    private JobApplicationRepository jobApplicationRepository;
+
+    @Inject
     private UserRepository userRepository;
 
     @Inject
@@ -69,6 +74,7 @@ public class ApplicationResourceTest {
         when(offerRepository.findOne(OFFER_ID)).thenReturn(offer);
         JobApplicationResource jobApplicationResource = new JobApplicationResource();
         ReflectionTestUtils.setField(jobApplicationResource, "offerRepository", offerRepository);
+        ReflectionTestUtils.setField(jobApplicationResource, "jobApplicationRepository", jobApplicationRepository);
         ReflectionTestUtils.setField(jobApplicationResource, "mailService", mailService);
 
         this.restMockMvc = MockMvcBuilders.standaloneSetup(jobApplicationResource)
@@ -88,11 +94,9 @@ public class ApplicationResourceTest {
         restMockMvc.perform(post("/api/applications")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(dto)))
-            .andExpect(status().isAccepted());
+            .andExpect(status().isCreated());
 
         Mockito.verify(mailService).sendApplication(APPLICANT_EMAIL, offer);
-        //StrictAssertions.assertThat(testJobOffer.getLocation()).isEqualTo(DEFAULT_LOCATION);
-        //StrictAssertions.assertThat(testJobOffer.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
     }
 
 }
