@@ -12,15 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -55,6 +53,16 @@ public class JobApplicationResource {
         return ResponseEntity.created(new URI("/api/offers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("Job Application", result.getId().toString()))
             .body(result);
+    }
 
+    @RequestMapping(value = "/applications/{offerId}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public List<JobApplication> getAll(@PathVariable Long offerId) {
+        log.debug("REST request to get all Offers");
+        Offer offer =  new Offer();
+        offer.setId(offerId);
+        return jobApplicationRepository.findByOffer(offer);
     }
 }
