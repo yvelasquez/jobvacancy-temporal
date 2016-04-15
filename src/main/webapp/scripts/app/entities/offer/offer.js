@@ -33,10 +33,10 @@ angular.module('jobvacancyApp')
                     }
                 },
                 resolve: {
-                    entity: ['$stateParams', 'Offer', function($stateParams, Offer) {
-                        return Offer.get({id : $stateParams.id});
+                    entity: ['$stateParams', 'Offer','Application', function($stateParams, Offer, Application) {
+                        return {offer:Offer.get({id : $stateParams.id}), applications: Application.query({id: $stateParams.id})};
                     }]
-                }
+                },
             })
             .state('offer.new', {
                 parent: 'offer',

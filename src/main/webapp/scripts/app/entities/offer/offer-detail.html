@@ -46,6 +46,29 @@
         </table>
     </div>
 
+    <h2>Applicants</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Full name</th>
+                <th>Email</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- foreach -->
+            <tr ng-repeat="application in applications">
+                <td>
+                    <span>{{application.applicatName}}</span>
+                </td>
+                <td>
+                    <span>{{application.applicantEmail}}</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <button type="submit"
             onclick="window.history.back()"
             class="btn btn-info">
