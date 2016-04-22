@@ -21,9 +21,11 @@ import com.jobvacancy.web.rest.UserResource;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import org.springframework.transaction.annotation.Transactional;
 
 @WebAppConfiguration
 @ContextConfiguration(classes = Application.class, loader = SpringApplicationContextLoader.class)
+@Transactional
 public class UserStepDefs {
 
     @Inject

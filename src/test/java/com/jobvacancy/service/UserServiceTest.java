@@ -99,6 +99,7 @@ public class UserServiceTest {
     }
 
     @Test
+    @Transactional
     public void assertThatResetKeyMustBeValid() {
         User user = userService.createUserInformation("johndoe", "johndoe", "John", "Doe", "john.doe@localhost", "en-US");
 
@@ -109,7 +110,7 @@ public class UserServiceTest {
         userRepository.save(user);
         Optional<User> maybeUser = userService.completePasswordReset("johndoe2", user.getResetKey());
         assertThat(maybeUser.isPresent()).isFalse();
-        userRepository.delete(user);
+        //userRepository.delete(user);
     }
 
     @Test
