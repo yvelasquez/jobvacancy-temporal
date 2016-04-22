@@ -52,7 +52,7 @@ public class OfferResource {
         }
         String currentLogin = SecurityUtils.getCurrentUserLogin();
         Optional<User> currentUser =  userRepository.findOneByLogin(currentLogin);
-        offer.setUser(currentUser.get());
+        offer.setCompany(currentUser.get().getCompany());
         Offer result = offerRepository.save(offer);
         return ResponseEntity.created(new URI("/api/offers/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("offer", result.getId().toString()))
@@ -86,7 +86,9 @@ public class OfferResource {
     @Timed
     public List<Offer> getAllOffers() {
         log.debug("REST request to get all Offers");
-        return offerRepository.findByUserIsCurrentUser();
+        String currentLogin = SecurityUtils.getCurrentUserLogin();
+        Optional<User> currentUser =  userRepository.findOneByLogin(currentLogin);
+        return offerRepository.findByCompany(currentUser.get().getCompany());
     }
 
     /**

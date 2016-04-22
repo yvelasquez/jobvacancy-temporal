@@ -81,7 +81,7 @@ public class ApplicationResourceTest {
         offer = new Offer();
         offer.setTitle(OFFER_TITLE);
         offer.setId(OFFER_ID);
-        offer.setUser(user.get());
+        offer.setCompany(user.get().getCompany());
         when(offerRepository.findOne(OFFER_ID)).thenReturn(offer);
         JobApplicationResource jobApplicationResource = new JobApplicationResource();
         ReflectionTestUtils.setField(jobApplicationResource, "offerRepository", offerRepository);

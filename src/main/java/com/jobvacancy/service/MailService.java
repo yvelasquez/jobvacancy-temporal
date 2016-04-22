@@ -95,7 +95,7 @@ public class MailService {
     }
 
     public void sendApplication(String applicantEmail, Offer offer) {
-        this.sendEmail(offer.getUser().getEmail(),
+        this.sendEmail(offer.getCompany().getContactEmail(),
             "[JobVacancy] New candidate",
             "Hi," + applicantEmail + "applied for your offer:" + offer.getTitle(),
             false,

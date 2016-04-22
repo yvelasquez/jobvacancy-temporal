@@ -94,7 +94,7 @@ public class PublicOfferResourceTest {
         offer.setTitle(DEFAULT_TITLE);
         offer.setLocation(DEFAULT_LOCATION);
         offer.setDescription(DEFAULT_DESCRIPTION);
-        offer.setUser(user.get());
+        //offer.setUser(user.get());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.jobvacancy.repository;
 
+import com.jobvacancy.domain.Company;
 import com.jobvacancy.domain.Offer;
 
 import org.springframework.data.jpa.repository.*;
@@ -11,7 +12,5 @@ import java.util.List;
  */
 public interface OfferRepository extends JpaRepository<Offer,Long> {
 
-    @Query("select offer from Offer offer where offer.user.login = ?#{principal.username}")
-    List<Offer> findByUserIsCurrentUser();
-
+    List<Offer> findByCompany(Company company);
 }

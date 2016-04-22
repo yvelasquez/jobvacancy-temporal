@@ -36,12 +36,5 @@
                                  constraintName="fk_offer_user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
-
-        <loadData encoding="UTF-8"
-                  file="config/liquibase/offers.csv"
-                  separator=";"
-                  tableName="offer">
-        </loadData>
-
     </changeSet>
 </databaseChangeLog>

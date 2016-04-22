@@ -31,7 +31,7 @@ public class Offer implements Serializable {
     private String description;
 
     @ManyToOne
-    private User user;
+    private Company company;
 
     public Long getId() {
         return id;
@@ -65,12 +65,12 @@ public class Offer implements Serializable {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     @Override

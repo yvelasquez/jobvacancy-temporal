@@ -1,11 +1,14 @@
 package com.jobvacancy.web.rest;
 
 import com.jobvacancy.Application;
+import com.jobvacancy.domain.Company;
 import com.jobvacancy.domain.Offer;
 import com.jobvacancy.domain.User;
+import com.jobvacancy.repository.CompanyRepository;
 import com.jobvacancy.repository.OfferRepository;
 
 import com.jobvacancy.repository.UserRepository;
+import org.boon.di.In;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -84,7 +87,12 @@ public class OfferResourceTest {
 
     private Optional<User> user;
 
+    private Company company;
+
     private Offer offer;
+
+    @Inject
+    private CompanyRepository companyRepository;
 
     @PostConstruct
     public void setup() {
@@ -92,8 +100,10 @@ public class OfferResourceTest {
         OfferResource offerResource = new OfferResource();
         ReflectionTestUtils.setField(offerResource, "offerRepository", offerRepository);
 
+        company = companyRepository.findOne(1L);
         // TODO: this should be refactored in a based class because is a common concern
         user =  userRepository.findOneByLogin("user");
+        user.get().setCompany(company);
         when(mockUserRepository.findOneByLogin(Mockito.any())).thenReturn(user);
         ReflectionTestUtils.setField(offerResource, "userRepository", mockUserRepository);
 
@@ -108,7 +118,7 @@ public class OfferResourceTest {
         offer.setTitle(DEFAULT_TITLE);
         offer.setLocation(DEFAULT_LOCATION);
         offer.setDescription(DEFAULT_DESCRIPTION);
-        offer.setUser(user.get());
+        offer.setCompany(company);
     }
 
     @Test

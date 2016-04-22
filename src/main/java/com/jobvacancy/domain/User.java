@@ -31,9 +31,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     @JsonIgnore
     @NotNull
-    @Size(min = 60, max = 60) 
+    @Size(min = 60, max = 60)
     @Column(length = 60)
     private String password;
+
+    @ManyToOne
+    private Company company;
+
 
     @Size(max = 50)
     @Column(name = "first_name", length = 50)
@@ -181,6 +185,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setPersistentTokens(Set<PersistentToken> persistentTokens) {
         this.persistentTokens = persistentTokens;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     @Override

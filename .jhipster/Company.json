@@ -1,0 +1,39 @@
+{
+    "relationships": [
+        {
+            "relationshipId": 1,
+            "relationshipName": "user",
+            "otherEntityName": "user",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "company"
+        },
+        {
+            "relationshipId": 2,
+            "relationshipName": "offers",
+            "otherEntityName": "offer",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "company"
+        }
+    ],
+    "fields": [
+        {
+            "fieldId": 1,
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": []
+        },
+        {
+            "fieldId": 2,
+            "fieldName": "reputation",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldId": 3,
+            "fieldName": "registrationDate",
+            "fieldType": "LocalDate"
+        }
+    ],
+    "changelogDate": "20160420023802",
+    "dto": "no",
+    "pagination": "no"
+}

@@ -16,8 +16,10 @@ import static sun.nio.cs.Surrogate.is;
 
 import javax.inject.Inject;
 
+import com.jobvacancy.domain.Company;
 import com.jobvacancy.domain.Offer;
 import com.jobvacancy.domain.User;
+import com.jobvacancy.repository.CompanyRepository;
 import com.jobvacancy.repository.JobApplicationRepository;
 import com.jobvacancy.repository.OfferRepository;
 import com.jobvacancy.repository.UserRepository;
@@ -66,6 +68,9 @@ public class JobApplicationStepDefs {
     private OfferRepository offerRepository;
 
     @Inject
+    private CompanyRepository companyRepository;
+
+    @Inject
     private JobApplicationRepository jobApplicationRepository;
 
     @Inject
@@ -94,10 +99,11 @@ public class JobApplicationStepDefs {
     @Given("^java programmer offer$")
     public void java_programmer_offer() throws Throwable {
         Optional<User> user = userRepository.findOneByLogin("user");
+        Company company = companyRepository.findOne(1L);
         offer = new Offer();
         offer.setTitle("Java Programmer");
         offer.setId(OFFER_ID);
-        offer.setUser(user.get());
+        offer.setCompany(company);
         applicationCount = jobApplicationRepository.count();
     }
 
