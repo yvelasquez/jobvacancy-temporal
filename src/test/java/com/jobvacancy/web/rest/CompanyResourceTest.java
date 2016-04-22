@@ -2,12 +2,17 @@ package com.jobvacancy.web.rest;
 
 import com.jobvacancy.Application;
 import com.jobvacancy.domain.Company;
+import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.CompanyRepository;
 
+import com.jobvacancy.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.hamcrest.Matchers.hasItem;
+
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -20,14 +25,19 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -53,6 +63,12 @@ public class CompanyResourceTest {
     private static final LocalDate UPDATED_REGISTRATION_DATE = LocalDate.now(ZoneId.systemDefault());
 
     @Inject
+    private WebApplicationContext webApplicationContext;
+
+    @Inject
+    private UserRepository userRepository;
+
+    @Inject
     private CompanyRepository companyRepository;
 
     @Inject
@@ -65,11 +81,22 @@ public class CompanyResourceTest {
 
     private Company company;
 
+    private Optional<User> user;
+
+    @Mock
+    private UserRepository mockUserRepository;
+
     @PostConstruct
     public void setup() {
         MockitoAnnotations.initMocks(this);
         CompanyResource companyResource = new CompanyResource();
         ReflectionTestUtils.setField(companyResource, "companyRepository", companyRepository);
+
+        user =  userRepository.findOneByLogin("user");
+        user.get().setCompany(company);
+        when(mockUserRepository.findOneByLogin(Mockito.any())).thenReturn(user);
+        ReflectionTestUtils.setField(companyResource, "userRepository", mockUserRepository);
+
         this.restCompanyMockMvc = MockMvcBuilders.standaloneSetup(companyResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();
@@ -88,8 +115,6 @@ public class CompanyResourceTest {
     public void createCompany() throws Exception {
         int databaseSizeBeforeCreate = companyRepository.findAll().size();
 
-        // Create the Company
-
         restCompanyMockMvc.perform(post("/api/companys")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.convertObjectToJsonBytes(company)))
@@ -106,19 +131,25 @@ public class CompanyResourceTest {
 
     @Test
     @Transactional
-    public void getAllCompanys() throws Exception {
-        // Initialize the database
+    public void getAllCompanysShouldReturnThoseOfTheUser() throws Exception {
+
+        // get the companies of the user
+        Optional<User> user= userRepository.findOneByLogin("user");
+        Company companyOfTheUser = user.get().getCompany();
+
+        // create a new company
         companyRepository.saveAndFlush(company);
 
-        // Get all the companys
-        restCompanyMockMvc.perform(get("/api/companys"))
+        // Get all the companies
+        restCompanyMockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
+
+        restCompanyMockMvc.perform(get("/api/companys").with(user("user")))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(company.getId().intValue())))
-                .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-                .andExpect(jsonPath("$.[*].reputation").value(hasItem(DEFAULT_REPUTATION)))
-                .andExpect(jsonPath("$.[*].registrationDate").value(hasItem(DEFAULT_REGISTRATION_DATE.toString())));
+                .andExpect(jsonPath("$.[*].id").value(hasItem(companyOfTheUser.getId().intValue())))
+                .andExpect(jsonPath("$.[*].name").value(hasItem(companyOfTheUser.getName())));
     }
+
 
     @Test
     @Transactional

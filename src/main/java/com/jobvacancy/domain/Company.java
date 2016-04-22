@@ -33,6 +33,11 @@ public class Company implements Serializable {
     @JsonIgnore
     private Set<Offer> offerss = new HashSet<>();
 
+    @OneToMany(mappedBy = "company")
+    @JsonIgnore
+    private Set<User> users = new HashSet<>();
+
+
     @Column(name = "contact_email")
     private String contactEmail;
 

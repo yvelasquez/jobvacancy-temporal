@@ -1,12 +1,13 @@
 <div>
-    <h2>Companys</h2>
+    <h2>My Company Profile</h2>
     <jh-alert></jh-alert>
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <button class="btn btn-primary" ui-sref="company.new">
-                    <span class="glyphicon glyphicon-flash"></span> <span>Create a new Company</span>
+                <button class="btn btn-primary" ui-sref="company.new" ng-if="companys.length == 0">
+                    <span class="glyphicon glyphicon-flash"></span> <span>Register my Company</span>
                 </button>
+
             </div>
         </div>
     </div>
@@ -27,9 +28,6 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
                             <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span>Cancel</span>
                         </button>
-                        <button type="submit" ng-disabled="deleteForm.$invalid" class="btn btn-danger">
-                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span>Delete</span>
-                        </button>
                     </div>
                 </form>
             </div>
@@ -40,16 +38,14 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Name</th>
                     <th>Reputation</th>
-                    <th>RegistrationDate</th>
+                    <th>Registered On</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="company in companys track by company.id">
-                    <td><a ui-sref="company.detail({id:company.id})">{{company.id}}</a></td>
                     <td>{{company.name}}</td>
                     <td>{{company.reputation}}</td>
                         <td>{{company.registrationDate | date:'mediumDate'}}</td>
@@ -63,11 +59,6 @@
                                 ui-sref="company.edit({id:company.id})"
                                 class="btn btn-primary btn-sm">
                             <span class="glyphicon glyphicon-pencil"></span>&nbsp;<span> Edit</span>
-                        </button>
-                        <button type="submit"
-                                ng-click="delete(company.id)"
-                                class="btn btn-danger btn-sm">
-                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span> Delete</span>
                         </button>
                     </td>
                 </tr>

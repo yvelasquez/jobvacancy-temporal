@@ -35,7 +35,8 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column(length = 60)
     private String password;
 
-    @ManyToOne
+    @ManyToOne()
+    @JsonIgnore
     private Company company;
 
 

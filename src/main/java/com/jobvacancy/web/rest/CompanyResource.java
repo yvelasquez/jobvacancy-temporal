@@ -2,7 +2,10 @@ package com.jobvacancy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.jobvacancy.domain.Company;
+import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.CompanyRepository;
+import com.jobvacancy.repository.UserRepository;
+import com.jobvacancy.security.SecurityUtils;
 import com.jobvacancy.web.rest.util.HeaderUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +34,9 @@ public class CompanyResource {
     @Inject
     private CompanyRepository companyRepository;
 
+    @Inject
+    private UserRepository userRepository;
+
     /**
      * POST  /companys -> Create a new company.
      */
@@ -42,7 +49,12 @@ public class CompanyResource {
         if (company.getId() != null) {
             return ResponseEntity.badRequest().header("Failure", "A new company cannot already have an ID").body(null);
         }
+
         Company result = companyRepository.save(company);
+        String currentLogin = SecurityUtils.getCurrentUserLogin();
+        Optional<User> currentUser =  userRepository.findOneByLogin(currentLogin);
+        currentUser.get().setCompany(company);
+        userRepository.save(currentUser.get());
         return ResponseEntity.created(new URI("/api/companys/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("company", result.getId().toString()))
             .body(result);
@@ -75,7 +87,14 @@ public class CompanyResource {
     @Timed
     public List<Company> getAllCompanys() {
         log.debug("REST request to get all Companys");
-        return companyRepository.findAll();
+        String currentLogin = SecurityUtils.getCurrentUserLogin();
+        Optional<User> currentUser =  userRepository.findOneByLogin(currentLogin);
+        List<Company> companies = new ArrayList<Company>();
+        Company company = currentUser.get().getCompany();
+        if (company != null)
+            companies.add(company);
+        return companies;
+
     }
 
     /**
