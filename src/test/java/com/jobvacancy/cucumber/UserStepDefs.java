@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import javax.inject.Inject;
 
+import cucumber.api.PendingException;
+import cucumber.api.java.en.Given;
 import org.springframework.boot.test.SpringApplicationContextLoader;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -57,5 +59,4 @@ public class UserStepDefs {
 	public void his_last_name_is(String lastName) throws Throwable {
 		actions.andExpect(jsonPath("$.lastName").value(lastName));
 	}
-
 }

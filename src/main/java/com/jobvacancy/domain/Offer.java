@@ -1,9 +1,14 @@
 package com.jobvacancy.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -29,6 +34,15 @@ public class Offer implements Serializable {
 
     @Column(name = "description")
     private String description;
+
+    @CreatedDate
+    @NotNull
+    @Column(name = "created_date", nullable = false)
+    private ZonedDateTime createdDate = ZonedDateTime.now();
+
+    public ZonedDateTime getCreatedDate() {
+        return this.createdDate;
+    }
 
     @ManyToOne
     private Company company;

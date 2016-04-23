@@ -44,7 +44,6 @@
                     <th>Title</th>
                     <th>Location</th>
                     <th>Description</th>
-                    <th>user</th>
                     <th></th>
                 </tr>
             </thead>
@@ -54,9 +53,6 @@
                     <td>{{offer.title}}</td>
                     <td>{{offer.location}}</td>
                     <td>{{offer.description}}</td>
-                    <td>
-                        {{offer.user.id}}
-                    </td>
                     <td>
                         <button type="submit"
                                 ui-sref="offer.detail({id:offer.id})"

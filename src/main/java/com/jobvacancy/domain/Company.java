@@ -1,10 +1,16 @@
 package com.jobvacancy.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.Month;
+import java.time.Period;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -118,5 +124,20 @@ public class Company implements Serializable {
 
     public void setContactEmail(String contactEmail) {
         this.contactEmail = contactEmail;
+    }
+
+    public void updateReputation() {
+        if(this.offerss.size() == 0) {
+            this.reputation = 0;
+            return;
+        }
+        ZonedDateTime aMonthAgo = ZonedDateTime.now().minus(Period.ofMonths(1));
+        int recentOffersCount = 0;
+        for (Offer o : this.offerss) {
+            if (o.getCreatedDate().isAfter(aMonthAgo)) {
+                recentOffersCount++;
+            }
+        }
+        this.reputation = recentOffersCount;
     }
 }
