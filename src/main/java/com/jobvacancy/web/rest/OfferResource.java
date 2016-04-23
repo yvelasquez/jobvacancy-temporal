@@ -1,6 +1,7 @@
 package com.jobvacancy.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.jobvacancy.domain.Company;
 import com.jobvacancy.domain.Offer;
 import com.jobvacancy.domain.User;
 import com.jobvacancy.repository.OfferRepository;
@@ -52,6 +53,10 @@ public class OfferResource {
         }
         String currentLogin = SecurityUtils.getCurrentUserLogin();
         Optional<User> currentUser =  userRepository.findOneByLogin(currentLogin);
+        Company company = currentUser.get().getCompany();
+        if (company == null) {
+            return ResponseEntity.unprocessableEntity().header("Failure", "A company profile is required").body(null);
+        }
         offer.setCompany(currentUser.get().getCompany());
         Offer result = offerRepository.save(offer);
         return ResponseEntity.created(new URI("/api/offers/" + result.getId()))

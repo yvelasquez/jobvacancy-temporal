@@ -32,6 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.setup.StandaloneMockMvcBuilder;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -83,6 +85,7 @@ public class OfferStepdefs {
 
     @Inject
     private WebApplicationContext webApplicationContext;
+    private ResultActions result;
 
     @Before
     public void setup(){
@@ -107,6 +110,14 @@ public class OfferStepdefs {
         userRepository.save(user);
     }
 
+    @Given("^the user \"([^\"]*)\" with no company$")
+    public void theUserWithNoCompany(String userName) throws Throwable {
+        String login = userName.toLowerCase();
+        String email = userName + "@example.com";
+        user = userService.createUserInformation(login,"Passw0rd!", userName, userName, email, "en");
+        userRepository.save(user);
+    }
+
     @When("^he posts an offer with title \"([^\"]*)\"$")
     public void hePostsAnOfferWithTitle(String offerTitle) throws Throwable {
 
@@ -115,13 +126,12 @@ public class OfferStepdefs {
         offer.setTitle(offerTitle);
 
         // Create the Offer
-        restOfferMockMvc.perform(post("/api/offers")
+        this.result = restOfferMockMvc.perform(post("/api/offers")
             .with(csrf())
             .with(SecurityMockMvcRequestPostProcessors.user(user.getLogin()))
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .accept(MediaType.APPLICATION_JSON_VALUE)
-            .content(TestUtil.convertObjectToJsonBytes(offer)))
-            .andExpect(status().isCreated());
+            .content(TestUtil.convertObjectToJsonBytes(offer)));
     }
 
     @Then("^the offer is listed in public offers$")
@@ -132,4 +142,21 @@ public class OfferStepdefs {
             .andExpect(jsonPath("$.[*].title").value(hasItem(offer.getTitle())));
     }
 
+    @Then("^the offer is not listed in public offers$")
+    public void theOfferIsNotListedInPublicOffers() throws Throwable {
+        restOfferMockMvc.perform(get("/api/publicoffers"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.[*].title").value(not(hasItem(offer.getTitle()))));
+    }
+
+    @Then("^the offer is created$")
+    public void theOfferIsCreated() throws Throwable {
+        this.result.andExpect(status().isCreated());
+    }
+
+    @Then("^the offer is not created$")
+    public void theOfferIsNotCreated() throws Throwable {
+        this.result.andExpect(status().isUnprocessableEntity());
+    }
 }
