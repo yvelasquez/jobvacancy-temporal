@@ -43,4 +43,5 @@ public class ReputationStepDefs {
         }
         company.setOfferss(offers);
     }
+
 }
