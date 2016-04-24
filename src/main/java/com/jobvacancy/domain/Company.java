@@ -160,7 +160,7 @@ public class Company implements Serializable {
     @JsonIgnore
     public Subscription getSubscription() {
 
-        return new BasicSubscription();
+        return Subscription.createInstanceFor(this);
 
     }
 
