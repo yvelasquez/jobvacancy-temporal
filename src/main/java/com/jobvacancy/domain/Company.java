@@ -43,9 +43,20 @@ public class Company implements Serializable {
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
-
     @Column(name = "contact_email")
     private String contactEmail;
+
+    public Subscription.Type getSubscriptionType() {
+        return subscriptionType;
+    }
+
+    public void setSubscriptionType(Subscription.Type subscriptionType) {
+        this.subscriptionType = subscriptionType;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="subscription_type")
+    private Subscription.Type subscriptionType;
 
     public Long getId() {
         return id;
@@ -85,6 +96,10 @@ public class Company implements Serializable {
 
     public void setOfferss(Set<Offer> offers) {
         this.offerss = offers;
+    }
+
+    public Company() {
+        this.subscriptionType = Subscription.Type.BASIC;
     }
 
     @Override
@@ -140,4 +155,13 @@ public class Company implements Serializable {
         }
         this.reputation = recentOffersCount;
     }
+
+    @Transient
+    @JsonIgnore
+    public Subscription getSubscription() {
+
+        return new BasicSubscription();
+
+    }
+
 }

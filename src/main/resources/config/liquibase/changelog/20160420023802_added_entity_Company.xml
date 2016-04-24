@@ -25,6 +25,7 @@
             <column name="reputation" type="integer"/>
             <column name="registration_date" type="date"/>
             <column name="contact_email" type="varchar(100)"/>
+            <column name="subscription_type" type="varchar(100)"/>
 
         </createTable>
 
