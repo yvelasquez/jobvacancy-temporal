@@ -8,7 +8,7 @@ angular.module('jobvacancyApp')
                 url: '/companys',
                 data: {
                     authorities: ['ROLE_USER'],
-                    pageTitle: 'Companys'
+                    pageTitle: 'My Company Profile'
                 },
                 views: {
                     'content@': {
