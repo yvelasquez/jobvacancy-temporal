@@ -13,4 +13,6 @@ import java.util.List;
 public interface OfferRepository extends JpaRepository<Offer,Long> {
 
     List<Offer> findByCompany(Company company);
+
+	List<Offer> findAll();
 }
