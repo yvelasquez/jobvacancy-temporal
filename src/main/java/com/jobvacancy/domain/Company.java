@@ -99,6 +99,8 @@ public class Company implements Serializable {
     }
 
     public Company() {
+        this.reputation = 0;
+        this.registrationDate = LocalDate.now();
         this.subscriptionType = Subscription.Type.BASIC;
     }
 
