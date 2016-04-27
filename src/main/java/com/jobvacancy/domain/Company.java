@@ -144,26 +144,7 @@ public class Company implements Serializable {
     }
 
     public void updateReputation() {
-        if(this.offerss.size() == 0) {
-            this.reputation = 0;
-            return;
-        }
-        ZonedDateTime aMonthAgo = ZonedDateTime.now().minus(Period.ofMonths(1));
-        int recentOffersCount = 0;
-        for (Offer o : this.offerss) {
-            if (o.getCreatedDate().isAfter(aMonthAgo)) {
-                recentOffersCount++;
-            }
-        }
-        this.reputation = recentOffersCount;
     }
 
-    @Transient
-    @JsonIgnore
-    public Subscription getSubscription() {
-
-        return Subscription.createInstanceFor(this);
-
-    }
 
 }
