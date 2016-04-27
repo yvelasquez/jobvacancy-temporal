@@ -1,3 +1,4 @@
+@txn
 Feature: Billing Process
     Subscription are managed on monthly basis
     Subscription type changes are out of scope (for now)

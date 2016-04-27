@@ -1,3 +1,4 @@
+@txn
 Feature: Company reputation
 
     Scenario: Reputation Zero when no offers published

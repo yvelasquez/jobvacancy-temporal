@@ -1,3 +1,4 @@
+@txn
 Feature: Search offers
 
     Scenario: Search for all offers
@@ -13,4 +14,4 @@ Feature: Search offers
         When I search for active offers
         Then I should first find offer with title "Agile Explorer"
         And I should find offer with title "Agile Opressor"
-       
+

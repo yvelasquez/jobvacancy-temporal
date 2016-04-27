@@ -1,3 +1,4 @@
+@txn
 Feature: Billing
 
     Scenario: Basic subscription is free

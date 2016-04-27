@@ -1,3 +1,4 @@
+@txn
 Feature: Offer management
 
     Scenario: Offer creation main flow
