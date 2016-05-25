@@ -2,9 +2,11 @@ package com.jobvacancy.domain;
 
 import javax.persistence.*;
 
-public abstract class Subscription {
+public class Subscription {
 
-    public abstract int calculateAmountToBill();
+    public int calculateAmountToBill() {
+        return 0;
+    }
 
     public enum Type {
         BASIC,
