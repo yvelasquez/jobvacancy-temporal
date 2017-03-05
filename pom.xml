@@ -685,12 +685,14 @@
                                 <fileset>
                                     <directory>src/main/webapp/dist</directory>
                                 </fileset>
+                                <!--
                                 <fileset>
                                     <directory>.tmp</directory>
                                 </fileset>
                                 <fileset>
                                     <directory>node_modules</directory>
                                 </fileset>
+                                -->
                             </filesets>
                         </configuration>
                     </plugin>
