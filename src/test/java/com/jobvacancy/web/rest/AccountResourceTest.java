@@ -9,6 +9,7 @@ import com.jobvacancy.security.AuthoritiesConstants;
 import com.jobvacancy.service.MailService;
 import com.jobvacancy.service.UserService;
 import com.jobvacancy.web.rest.dto.UserDTO;
+import org.junit.Ignore;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
